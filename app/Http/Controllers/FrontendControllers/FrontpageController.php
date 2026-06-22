@@ -39,6 +39,7 @@ class FrontpageController extends Controller
 
   public function index(Request $request)
   {
+    
     $popup = MultipleBannerModel::where(['banner_id' => '1', 'status' => 1])->get();
     $banners = MultipleBannerModel::where(['banner_id' => 3, 'status' => 1])->get();
     $all = PostTypeModel::orderBy('ordering', 'asc')->get();
@@ -66,6 +67,7 @@ class FrontpageController extends Controller
 
   public function posttype($uri)
   {
+    
     if (!check_posttype_uri($uri)) {
       abort(404);
     }
@@ -85,10 +87,12 @@ class FrontpageController extends Controller
 
   public function pagedetail($uri)
   {
+     
     if (!check_uri($uri)) {
       abort(404);
     }
-    $data = PostModel::where('uri', $uri)->orWhere('page_key', $uri)->first();
+    $data = PostModel::with('teamMembers')->where('uri', $uri)->orWhere('page_key', $uri)->first();
+    // dd($data->teamMembers);
     $tmpl['template'] = 'single';
     if ($tmpl['template']) {
       $data['template'] = $data['template'];
@@ -108,6 +112,7 @@ class FrontpageController extends Controller
 
   public function pagedetail_child($parenturi, $uri)
   {
+    
     $data = PostModel::where('uri', $uri)->orWhere('page_key', $uri)->first();
 
     $tmpl['template'] = 'single';
